@@ -1,0 +1,27 @@
+agda
+x git-annex
+pandoc
+x arx
+hadolint
+postgrest
+bup
+haskell-stack
+purescript
+cabal-install
+highlighting-kate
+qriollo
+cgrep
+hledger
+shellcheck
+cless
+idris
+texmath
+cryptol
+mighttpd2
+vimpager
+darcs
+pandoc-citeproc
+homebrew/devel-only/elm-format
+x elm
+pandoc-crossref
+homebrew/gui/threadscope
