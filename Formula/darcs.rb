@@ -5,8 +5,8 @@ class Darcs < Formula
 
   desc "Distributed version control system that tracks changes, via Haskell"
   homepage "http://darcs.net/"
-  url "http://darcs.net/releases/darcs-2.10.3.tar.gz"
-  sha256 "ca00c40d08276f94868c7c1bbc6dbd9b6b41a15c1907c34947aaa51d4dbbf642"
+  url "http://darcs.net/releases/darcs-2.12.0.tar.gz"
+  sha256 "54616b826bfb1d0d999d2e8050338052a82b427e888c14d57625168eff83bb3e"
 
   bottle do
     sha256 "a65c9d857fd868ff6768c3076511b6bfe5d11f893b58a3d943ae7b0319db73d3" => :el_capitan
@@ -19,6 +19,9 @@ class Darcs < Formula
   depends_on "gmp"
 
   def install
+    # GHC 8 compat
+    (buildpath/"cabal.config").write("allow-newer: base\n")
+
     install_cabal_package
   end
 
