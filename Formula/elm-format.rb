@@ -19,6 +19,9 @@ class ElmFormat < Formula
   def install
     (buildpath/"elm-format").install Dir["*"]
 
+    # GHC 8 compat
+    (buildpath/"cabal.config").write("allow-newer aeson,base,transformers\n")
+
     cabal_sandbox do
       cabal_sandbox_add_source "elm-format"
       cabal_install "--only-dependencies", "elm-format"
