@@ -19,6 +19,9 @@ class PandocCiteproc < Formula
   depends_on "pandoc"
 
   def install
+    # GHC 8 compat
+    (buildpath/"cabal.config").write("allow-newer: base,data-default,time\n")
+
     args = []
     args << "--constraint=cryptonite -support_aesni" if MacOS.version <= :lion
     install_cabal_package *args
