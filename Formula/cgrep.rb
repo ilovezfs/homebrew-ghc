@@ -19,6 +19,13 @@ class Cgrep < Formula
   depends_on "cabal-install" => :build
   depends_on "pcre"
 
+  # Fixes src/Main.hs:105:61: error: Ambiguous occurrence ‘isSymbolicLink’
+  # Reported 23 May 2016: https://github.com/awgn/cgrep/pull/34
+  patch do
+    url "https://github.com/awgn/cgrep/pull/34.patch"
+    sha256 "63312912ed30c4edd4d934321d0819844f059a17889eba3775ab5cae7e2a2fc5"
+  end
+
   def install
     install_cabal_package
   end
