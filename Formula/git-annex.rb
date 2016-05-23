@@ -27,7 +27,25 @@ class GitAnnex < Formula
   depends_on "gnutls"
   depends_on "quvi"
 
+  # GHC 8 compat
+  patch do
+    url "https://github.com/ilovezfs/git-annex/pull/2.patch"
+    sha256 "75db6bf6b8eed6a5608a5e3a655654980b4c3b4633907c19a5505c763f20c4ef"
+  end
+
   def install
+    # GHC 8 compat
+    # Reported 22 May 2016: http://git-annex.branchable.com/bugs/ghc_8.0.1_build_fixes
+    (buildpath/"cabal.config").write("allow-newer: base,time,transformers\n")
+
+    # Additional dependencies required to run "cabal configure"
+    # Reported 22 May 2016: http://git-annex.branchable.com/bugs/ghc_8.0.1_build_fixes/
+    if build.head?
+      inreplace "git-annex.cabal",
+        "Setup-Depends: base (>= 4.5), hslogger, MissingH",
+        "Setup-Depends: base (>= 4.5), hslogger, MissingH, unix-compat, process, unix, filepath, exceptions, bytestring, directory, IfElse, data-default, Cabal"
+    end
+
     install_cabal_package :using => ["alex", "happy", "c2hs"], :flags => ["s3", "webapp"] do
       # this can be made the default behavior again once git-union-merge builds properly when bottling
       if build.with? "git-union-merge"
