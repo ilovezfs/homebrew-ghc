@@ -21,6 +21,9 @@ class Pandoc < Formula
   depends_on "gmp"
 
   def install
+    # GHC 8 compat
+    (buildpath/"cabal.config").write("allow-newer: base,time\n")
+
     args = []
     args << "--constraint=cryptonite -support_aesni" if MacOS.version <= :lion
     install_cabal_package *args
