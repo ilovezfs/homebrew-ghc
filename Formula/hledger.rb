@@ -18,6 +18,9 @@ class Hledger < Formula
   depends_on "cabal-install" => :build
 
   def install
+    # GHC 8 compat
+    (buildpath/"cabal.config").write("allow-newer: transformers\n")
+
     install_cabal_package :using => ["happy"]
   end
 
