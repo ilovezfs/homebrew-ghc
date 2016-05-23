@@ -44,6 +44,9 @@ class Elm < Formula
     # elm-compiler needs to be staged in a subdirectory for the build process to succeed
     (buildpath/"elm-compiler").install Dir["*"]
 
+    # GHC 8 compat
+    (buildpath/"cabal.config").write("allow-newer: aeson,base,HTTP,time,transformers\n")
+
     extras_no_reactor = ["elm-package", "elm-make", "elm-repl"]
     extras = extras_no_reactor + ["elm-reactor"]
     extras.each do |extra|
