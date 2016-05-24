@@ -21,7 +21,29 @@ class Postgrest < Formula
   depends_on "postgresql"
 
   def install
-    install_cabal_package :using => ["happy"]
+    # GHC 8 compat
+    cabalcfg = "allow-newer: base,transformers"
+    cabalcfg << "\nconstraints:"
+    cabal_sandbox do
+      %w[
+        bytestring-tree-builder 0.2.6
+        postgresql-binary 0.9
+        hasql-transaction 0.4.4.1
+      ].each_slice(2) do |pkg, ver|
+        cabalcfg << "\n#{pkg} ==#{ver}"
+        system "cabal", "get", pkg
+        cabal_sandbox_add_source "#{pkg}-#{ver}"
+        inreplace "#{pkg}-#{ver}/#{pkg}.cabal" do |s|
+          if pkg == "hasql-transaction"
+            s.gsub! "build-depends:", "build-depends: base,"
+          else
+            s.gsub! "ghc-options:", "ghc-options: -XNoImpredicativeTypes"
+          end
+        end
+      end
+      (buildpath/"cabal.config").write(cabalcfg)
+      install_cabal_package :using => ["happy"]
+    end
   end
 
   test do
