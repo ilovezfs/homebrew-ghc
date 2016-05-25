@@ -21,6 +21,8 @@ class HaskellStack < Formula
 
   def install
     # GHC 8 compat
+    # Fixes cabal: Could not resolve dependencies
+    # Reported 25 May 2016: https://github.com/commercialhaskell/stack/issues/2192
     (buildpath/"cabal.config").write("allow-newer: base,transformers\n")
 
     install_cabal_package
