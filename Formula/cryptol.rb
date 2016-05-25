@@ -43,7 +43,7 @@ class Cryptol < Formula
     buildpath.install resource("sbv-pr-219")
 
     cabal_sandbox do
-      system "cabal", "get", "sbv"
+      cabal_get "sbv"
       cd("sbv-5.11") { system "patch", "-p1", "-i", buildpath/"219.diff" }
       cabal_sandbox_add_source "sbv-5.11"
       system "make", "PREFIX=#{prefix}", "install"
