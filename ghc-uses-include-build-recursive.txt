@@ -1,27 +1,163 @@
-agda
-x git-annex
-pandoc
+build without changes:
+x agda
 x arx
-hadolint
-postgrest
-bup
-haskell-stack
-purescript
-cabal-install
-highlighting-kate
-qriollo
-cgrep
-hledger
-shellcheck
-cless
-idris
-texmath
-cryptol
-mighttpd2
-vimpager
-darcs
-pandoc-citeproc
-homebrew/devel-only/elm-format
-x elm
-pandoc-crossref
-homebrew/gui/threadscope
+x cabal-install
+x cgrep
+x hadolint
+x highlighting-kate
+x mighttpd2
+x purescript
+x qriollo
+x shellcheck
+x texmath
+
+minor patches:
++ cless
++ darcs
++ elm
++ git-annex
++ haskell-stack
++ hledger
++ pandoc
++ pandoc-citeproc
++ homebrew/devel-only/elm-format
+
+less than minor patches:
++ cryptol
++ postgrest
++ pandoc-crossref
+
+broken:
+! idris
+! homebrew/gui/threadscope
+
+___
+cryptol: fails due to generic-trie
+idris: error: expected: declaration
+postgrest: breaks due to postgresql-binary-0.9 and bytestring-tree-builder-0.2.6
+homebrew/gui/threadscope: Couldn't match expected type ‘Ptr ()’
+
+____
+cryptol:
+fails due to generic-trie
+Preprocessing library generic-trie-0.3.0.1...
+[1 of 2] Compiling Data.GenericTrie.Internal ( src/Data/GenericTrie/Internal.hs, dist/dist-sandbox-6c4f9ed/build/Data/GenericTrie/Internal.o )
+
+src/Data/GenericTrie/Internal.hs:583:68: error:
+    • Expected a type, but ‘c’ has kind ‘Meta’
+    • In the first argument of ‘MProxy’, namely ‘c’
+      In an expression type signature: MProxy c f ()
+      In the first argument of ‘conName’, namely
+        ‘(MProxy :: MProxy c f ())’
+____
+idris:
+attempted: allow-newer: base,time,transformers
+Errors out with this:
+
+clang: warning: argument unused during compilation: '-L/System/Library/Frameworks/OpenGL.framework/Versions/Current/Libraries'
+Building libraries...
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C prelude build
+../../dist/dist-sandbox-fff7a31a/build/idris/idris --build prelude.ipkg
+./Builtins.idr:6:1: error: expected: declaration,
+    end of input
+||| The canonical single-element type, also known as the trivially 
+^                                                                  
+Type checking ./Builtins.idr
+make[1]: *** [build] Error 1
+make: *** [build] Error 2
+cabal: Leaving directory '.'
+cabal: Error: some packages failed to install:
+idris-0.11 failed during the building phase. The exception was:
+ExitFailure 2
+/
+____
+
+homebrew/gui/threadscope:
+
+Graphics/UI/Gtk/Embedding/Plug.chs:120:6: error:
+    • Couldn't match expected type ‘Ptr ()’
+                  with actual type ‘Maybe DrawWindow’
+    • In the first argument of ‘gtk_plug_new’, namely
+        ‘(fromNativeWindowId (fromMaybe nativeWindowIdNone socketId))’
+      In the second argument of ‘($)’, namely
+        ‘gtk_plug_new
+           (fromNativeWindowId (fromMaybe nativeWindowIdNone socketId))’
+      In the second argument of ‘($)’, namely
+        ‘liftM (castPtr :: Ptr Widget -> Ptr Plug)
+         $ gtk_plug_new
+             (fromNativeWindowId (fromMaybe nativeWindowIdNone socketId))’
+
+Graphics/UI/Gtk/Embedding/Plug.chs:137:6: error:
+    • Couldn't match expected type ‘Ptr ()’
+                  with actual type ‘Maybe DrawWindow’
+    • In the second argument of ‘\ (Display arg1) arg2
+                                   -> withForeignPtr arg1
+                                      $ \ argPtr1 -> gtk_plug_new_for_display argPtr1 arg2’, namely
+        ‘(fromNativeWindowId (fromMaybe nativeWindowIdNone socketId))’
+      In the second argument of ‘($)’, namely
+        ‘(\ (Display arg1) arg2
+            -> withForeignPtr arg1
+               $ \ argPtr1 -> gtk_plug_new_for_display argPtr1 arg2)
+           display
+           (fromNativeWindowId (fromMaybe nativeWindowIdNone socketId))’
+      In the second argument of ‘($)’, namely
+        ‘liftM (castPtr :: Ptr Widget -> Ptr Plug)
+         $ (\ (Display arg1) arg2
+              -> withForeignPtr arg1
+                 $ \ argPtr1 -> gtk_plug_new_for_display argPtr1 arg2)
+             display
+             (fromNativeWindowId (fromMaybe nativeWindowIdNone socketId))’
+
+Graphics/UI/Gtk/Embedding/Plug.chs:151:3: error:
+    • Couldn't match type ‘Ptr ()’ with ‘Maybe DrawWindow’
+      Expected type: IO (Maybe DrawWindow)
+        Actual type: IO (Ptr ())
+    • In the second argument of ‘($)’, namely
+        ‘(\ (Plug arg1)
+            -> withForeignPtr arg1 $ \ argPtr1 -> gtk_plug_get_id argPtr1)
+           (toPlug self)’
+      In the expression:
+        liftM toNativeWindowId
+        $ (\ (Plug arg1)
+             -> withForeignPtr arg1 $ \ argPtr1 -> gtk_plug_get_id argPtr1)
+            (toPlug self)
+      In an equation for ‘plugGetId’:
+          plugGetId self
+            = liftM toNativeWindowId
+              $ (\ (Plug arg1)
+                   -> withForeignPtr arg1 $ \ argPtr1 -> gtk_plug_get_id argPtr1)
+                  (toPlug self)
+cabal: Leaving directory '/var/folders/w6/9r0nb9011glb8fdz__srd78c0000gq/T/cabal-tmp-47736/gtk-0.14.3
+
+0 bup
+0 vimpager
+
+__END__
+agda: cabal-install emacs ghc gmp
+pandoc: cabal-install ghc gmp
+hadolint: cabal-install ghc
+postgrest: cabal-install ghc postgresql
+haskell-stack: cabal-install ghc
+purescript: cabal-install ghc
+cabal-install: ghc
+highlighting-kate: cabal-install ghc
+qriollo: ghc
+cgrep: cabal-install ghc pcre
+hledger: cabal-install ghc
+shellcheck: cabal-install ghc pandoc
+cless: cabal-install ghc
+idris: cabal-install ghc gmp libffi pkg-config
+texmath: cabal-install ghc
+cryptol: cabal-install ghc git z3
+mighttpd2: cabal-install ghc
+darcs: cabal-install ghc gmp
+pandoc-citeproc: cabal-install ghc pandoc
+homebrew/devel-only/elm-format: cabal-install ghc
+pandoc-crossref: cabal-install ghc pandoc
+homebrew/gui/threadscope: cabal-install cairo fontconfig freetype gettext ghc glib gmp gtk+ pango pkg-config
+
+bup: pandoc
+vimpager: pandoc
+
+
+
