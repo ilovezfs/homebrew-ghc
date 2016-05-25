@@ -31,7 +31,7 @@ class Postgrest < Formula
         hasql-transaction 0.4.4.1
       ].each_slice(2) do |pkg, ver|
         cabalcfg << "\n#{pkg} ==#{ver}"
-        system "cabal", "get", pkg
+        cabal_get pkg
         cabal_sandbox_add_source "#{pkg}-#{ver}"
         inreplace "#{pkg}-#{ver}/#{pkg}.cabal" do |s|
           if pkg == "hasql-transaction"
