@@ -21,9 +21,37 @@ class PandocCrossref < Formula
   depends_on "pandoc" => :run
 
   def install
-    args = []
-    args << "--constraint=cryptonite -support_aesni" if MacOS.version <= :lion
-    install_cabal_package *args
+    # GHC 8 compat
+    cabal_sandbox do
+      # https://ghc.haskell.org/trac/ghc/wiki/Migration/8.0#template-haskell-2.11.0.0
+      # http://git.haskell.org/ghc.git/commitdiff/575abf42e218925e456bf765abb14f069ac048a0
+      inreplace "lib/Text/Pandoc/CrossRef/Util/Settings/Template.hs" do |s|
+        s.gsub! "DataD _ _ params cons' _", "DataD _ _ params _ cons' _"
+        s.gsub! "NewtypeD _ _ params con' _", "NewtypeD _ _ params _ con' _"
+        s.gsub! "VarI _ t' _ _ <- reify accName", "VarI _ t' _ <- reify accName"
+      end
+      (buildpath/"cabal.config").write <<-EOS.undent
+        allow-newer: base,time
+        constraints: data-accessor-template ==0.2.1.12
+      EOS
+      system "cabal", "get", "data-accessor-template"
+      cd "data-accessor-template-0.2.1.12" do
+        inreplace "data-accessor-template.cabal",
+          "Build-Depends:  template-haskell >=2.4 && <2.11",
+          "Build-Depends:  template-haskell >=2.4 && <2.12"
+        inreplace "src-5/Data/Accessor/Template.hs" do |s|
+          s.gsub! "DataD _ _ params cons' _ -> return (params, cons')",
+            "DataD _ _ params _ cons' _ -> return (params, cons')"
+          s.gsub! "NewtypeD _ _ params con' _ -> return (params, [con'])",
+            "NewtypeD _ _ params _ con' _ -> return (params, [con'])"
+        end
+      end
+      cabal_sandbox_add_source "data-accessor-template-0.2.1.12"
+
+      args = []
+      args << "--constraint=cryptonite -support_aesni" if MacOS.version <= :lion
+      install_cabal_package *args
+    end
   end
 
   test do
