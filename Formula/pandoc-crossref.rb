@@ -34,7 +34,7 @@ class PandocCrossref < Formula
         allow-newer: base,time
         constraints: data-accessor-template ==0.2.1.12
       EOS
-      cabal_get "data-accessor-template"
+      system "cabal", "get", "data-accessor-template"
       cd "data-accessor-template-0.2.1.12" do
         inreplace "data-accessor-template.cabal",
           "Build-Depends:  template-haskell >=2.4 && <2.11",
